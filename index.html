@@ -104,13 +104,6 @@ html,body{
   transform-origin:right bottom;
 }
 
-.footer-wrapper{
-  pointer-events: none;
-}
-
-.footer-actions{
-  pointer-events: auto;
-}
 /* ===== BUTTON ===== */
 .footer-actions{
     position: fixed;
@@ -174,7 +167,9 @@ html,body{
   .footer-wrapper::before,
   .footer-wrapper::after{font-size:24px}
 }
-
+.bg{ pointer-events: none; }
+.footer-wrapper{ pointer-events: none; }
+.footer-actions{ pointer-events: auto; }
 /* ===== FIREWORK ===== */
 #fireworks{
   position:fixed;
@@ -336,6 +331,7 @@ setInterval(()=>{
 
 </body>
 </html>
+
 
 
 
