@@ -23,7 +23,7 @@ html,body{
   font-family:system-ui,-apple-system;
 }
 
-/* ===== BACKGROUND NGỰA ===== */
+/* ===== BACKGROUND ===== */
 .bg{
   position:fixed;
   inset:0;
@@ -37,100 +37,121 @@ html,body{
   top: 47%;
   left: 50%;
   transform: translate(-50%, -50%) rotate(-6deg);
-
   width: 52%;
   max-width: 300px;
   aspect-ratio: 4 / 5;
-
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-
   padding: 14px 16px;
   box-sizing: border-box;
-
   text-align: center;
   color: #ffd700;
   font-weight: 700;
   line-height: 1.4;
-
   z-index: 3;
   pointer-events: none;
 }
+.scroll-text .from{font-size:14px;margin-bottom:6px}
+.scroll-text .wish{font-size:15px;font-weight:800}
 
-.scroll-text .from{
-  font-size: 14px;
-  margin-bottom: 6px;
+/* ===== FOOTER + HOA ===== */
+.footer-wrapper{
+  position: fixed;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 420px;
+  height: 100px;
+  z-index: 5;
+  pointer-events: none;
 }
 
-.scroll-text .wish{
-  font-size: 15px;
-  font-weight: 800;
+/* LẮC NHẸ THEO GIÓ */
+@keyframes sway{
+  0%{transform:rotate(-6deg)}
+  50%{transform:rotate(6deg)}
+  100%{transform:rotate(-6deg)}
 }
+
 /* Cành đào (trái) */
 .footer-wrapper::before{
   content:"🌸 🌸 🌸";
   position:absolute;
-  left:-10px;
-  bottom:20px;
+  left:-12px;
+  bottom:26px;
   font-size:28px;
-  transform: rotate(-10deg);
-  opacity:.95;
+  animation:sway 6s ease-in-out infinite;
+  transform-origin:left bottom;
 }
 
 /* Cành mai (phải) */
 .footer-wrapper::after{
   content:"🌼 🌼 🌼";
   position:absolute;
-  right:-10px;
-  bottom:20px;
+  right:-12px;
+  bottom:26px;
   font-size:28px;
-  transform: rotate(12deg);
-  opacity:.95;
+  animation:sway 7s ease-in-out infinite reverse;
+  transform-origin:right bottom;
 }
-/* ===== FOOTER BUTTON ===== */
+
+/* ===== BUTTON ===== */
 .footer-actions{
-    position: fixed;
-    bottom: 80px;
-    left: 50%;
-    text-align: center;
-    height: 60px;
-    width: 55%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 16px;
-    z-index: 5;
+  position:absolute;
+  bottom:18px;
+  left:50%;
+  transform:translateX(-50%);
+  display:flex;
+  gap:12px;
+  pointer-events:auto;
 }
-
 .footer-actions button{
-    padding: 10px 16px;
-    border-radius: 999px;
-    border: none;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    background: linear-gradient(135deg,#ffd700,#ffb700);
-    color: #7a2e00;
-    box-shadow: 0 6px 14px rgba(0,0,0,.35);
+  padding:10px 18px;
+  border-radius:999px;
+  border:none;
+  font-size:14px;
+  font-weight:600;
+  cursor:pointer;
+  background: linear-gradient(135deg,#ffd700,#ffb700);
+  color:#7a2e00;
+  box-shadow:0 6px 14px rgba(0,0,0,.35);
 }
+.footer-actions button:active{transform:scale(.95)}
 
-.footer-actions button:active{
-  transform: scale(0.95);
+/* ===== HOA RỤNG ===== */
+.petals{
+  position:fixed;
+  inset:0;
+  z-index:4;
+  pointer-events:none;
+}
+.petal{
+  position:absolute;
+  font-size:18px;
+  animation:fall linear forwards;
+  opacity:.9;
+}
+@keyframes fall{
+  0%{transform:translateY(-20px) rotate(0deg);opacity:0}
+  10%{opacity:1}
+  100%{transform:translateY(110vh) rotate(360deg);opacity:0}
 }
 
 /* ===== MOBILE ===== */
-@media (max-width: 600px){
+@media (max-width:600px){
   .scroll-text{
-      top: 40%;
-      width: 85%;
-      line-height: 2.5;
-      max-width: 270px;
-      transform: translate(-40%, -55%) rotate(-7deg);
+    top:48%;
+    width:58%;
+    max-width:260px;
+    transform:translate(-50%,-50%) rotate(-5deg);
   }
-
   .scroll-text .from{font-size:13px}
   .scroll-text .wish{font-size:14px}
+  .footer-wrapper::before,
+  .footer-wrapper::after{font-size:24px}
 }
 
 /* ===== FIREWORK ===== */
@@ -147,25 +168,27 @@ html,body{
 
 <div class="bg"></div>
 
-<!-- ===== NỘI DUNG CHỮ ===== -->
 <div class="scroll-text">
-  <div class="from">
-    🎁 <b id="from"></b> gửi bạn lời chúc
-  </div>
+  <div class="from">🎁 <b id="from"></b> gửi bạn lời chúc</div>
   <div class="wish" id="wish"></div>
 </div>
 
-<!-- ===== FOOTER BUTTON ===== -->
-<div class="footer-actions">
-  <button onclick="share()">📤 Chia sẻ</button>
-  <button onclick="feedback()">💬 Phản hồi</button>
+<!-- HOA RỤNG -->
+<div class="petals" id="petals"></div>
+
+<!-- FOOTER -->
+<div class="footer-wrapper">
+  <div class="footer-actions">
+    <button onclick="share()">📤 Chia sẻ</button>
+    <button onclick="feedback()">💬 Phản hồi</button>
+  </div>
 </div>
 
 <canvas id="fireworks"></canvas>
 
 <script>
 /* ===== LỜI CHÚC ===== */
-const wishes = [
+const wishes=[
   "Năm mới chúc bạn mỗi ngày đều là một ngày vui 🌸",
   "Xuân sang chúc bạn an khang thịnh vượng 🧧",
   "Bính Ngọ đến, chúc bạn mã đáo thành công 🐎",
@@ -173,71 +196,59 @@ const wishes = [
   "Xuân mới chúc bạn tiền vào như nước 💰",
   "Chúc bạn một năm mới nhiều niềm vui 🎉"
 ];
+const params=new URLSearchParams(location.search);
+document.getElementById("from").innerText=params.get("from")||"Tùng Phạm";
+document.getElementById("wish").innerText=wishes[Math.floor(Math.random()*wishes.length)];
 
-const params = new URLSearchParams(location.search);
-const from = params.get("from") || "Tùng Phạm";
-const wish = wishes[Math.floor(Math.random()*wishes.length)];
-
-document.getElementById("from").innerText = from;
-document.getElementById("wish").innerText = wish;
+/* ===== HOA RỤNG KHI LOAD ===== */
+const petals=document.getElementById("petals");
+for(let i=0;i<18;i++){
+  const p=document.createElement("div");
+  p.className="petal";
+  p.textContent=Math.random()>.5?"🌸":"🌼";
+  p.style.left=Math.random()*100+"vw";
+  p.style.animationDuration=6+Math.random()*4+"s";
+  p.style.animationDelay=Math.random()*2+"s";
+  petals.appendChild(p);
+}
 
 /* ===== SHARE ===== */
 function share(){
   if(navigator.share){
     navigator.share({
-      title: document.title,
-      text: "🎉 Mình vừa nhận được lời chúc năm mới nè!",
-      url: location.href
+      title:document.title,
+      text:"🎉 Mình vừa nhận được lời chúc năm mới!",
+      url:location.href
     });
   }else{
-    prompt("Copy link để chia sẻ:", location.href);
+    prompt("Copy link để chia sẻ:",location.href);
   }
 }
-
-/* ===== FEEDBACK ===== */
 function feedback(){
-  window.open(
-    "https://www.facebook.com/messages/t/", 
-    "_blank"
-  );
+  window.open("https://www.facebook.com/messages/t/","_blank");
 }
 
 /* ===== FIREWORK ===== */
-const canvas = document.getElementById("fireworks");
-const ctx = canvas.getContext("2d");
-
-function resize(){
-  canvas.width = innerWidth;
-  canvas.height = innerHeight;
-}
-resize();
-addEventListener("resize", resize);
-
-let sparks = [];
-
+const canvas=document.getElementById("fireworks");
+const ctx=canvas.getContext("2d");
+function resize(){canvas.width=innerWidth;canvas.height=innerHeight}
+resize();addEventListener("resize",resize);
+let sparks=[];
 setInterval(()=>{
-  const x = Math.random()*canvas.width;
-  const y = Math.random()*canvas.height*0.4;
-  for(let i=0;i<28;i++){
-    sparks.push({
-      x,y,
-      dx:(Math.random()-.5)*4,
-      dy:(Math.random()-.5)*4,
-      life:45
-    });
+  const x=Math.random()*canvas.width;
+  const y=Math.random()*canvas.height*.4;
+  for(let i=0;i<26;i++){
+    sparks.push({x,y,dx:(Math.random()-.5)*4,dy:(Math.random()-.5)*4,life:45});
   }
 },1300);
-
 (function draw(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
   for(let i=sparks.length-1;i>=0;i--){
     const s=sparks[i];
-    s.x+=s.dx;
-    s.y+=s.dy;
-    s.life--;
+    s.x+=s.dx;s.y+=s.dy;s.life--;
     ctx.fillStyle="rgba(255,215,0,.85)";
     ctx.fillRect(s.x,s.y,3,3);
-    if(s.life<=0) sparks.splice(i,1);
+    if(s.life<=0)sparks.splice(i,1);
   }
   requestAnimationFrame(draw);
 })();
@@ -245,6 +256,3 @@ setInterval(()=>{
 
 </body>
 </html>
-
-
-
