@@ -68,7 +68,27 @@ html,body{
   font-size: 15px;
   font-weight: 800;
 }
+/* Cành đào (trái) */
+.footer-wrapper::before{
+  content:"🌸 🌸 🌸";
+  position:absolute;
+  left:-10px;
+  bottom:20px;
+  font-size:28px;
+  transform: rotate(-10deg);
+  opacity:.95;
+}
 
+/* Cành mai (phải) */
+.footer-wrapper::after{
+  content:"🌼 🌼 🌼";
+  position:absolute;
+  right:-10px;
+  bottom:20px;
+  font-size:28px;
+  transform: rotate(12deg);
+  opacity:.95;
+}
 /* ===== FOOTER BUTTON ===== */
 .footer-actions{
     position: fixed;
@@ -87,7 +107,7 @@ html,body{
     padding: 10px 16px;
     border-radius: 999px;
     border: none;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 600;
     cursor: pointer;
     background: linear-gradient(135deg,#ffd700,#ffb700);
@@ -225,5 +245,6 @@ setInterval(()=>{
 
 </body>
 </html>
+
 
 
