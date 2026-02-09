@@ -36,33 +36,42 @@ html,body{
   top:50%;
   left:50%;
   transform:translate(-50%,-50%);
-  width:75%;
-  max-width:420px;
+  width:60%;
+  max-width:360px;
+
+  background:rgba(255,235,200,0.85); /* nền giấy sáng */
+  padding:18px 16px;
+  border-radius:12px;
+  color:#7a2b00;
   text-align:center;
   z-index:3;
-  color:#7a0000;
+
+  box-shadow:0 8px 25px rgba(0,0,0,.25);
 }
 
+
 .scroll-text .from{
-  font-size:14px;
-  opacity:.85;
-  margin-bottom:10px;
+  font-size:13px;
+  opacity:.8;
+  margin-bottom:8px;
 }
 
 .scroll-text .wish{
-  font-size:18px;
+  font-size:17px;
   line-height:1.6;
   font-weight:600;
 }
 
+
 /* Mobile */
 @media(max-width:600px){
-  .scroll-text{
-    width:85%;
-    top:52%;
+   .scroll-text{
+    width:70%;
+    top:48%; /* đẩy lên đúng giữa giấy */
   }
+
   .scroll-text .wish{
-    font-size:16px;
+    font-size:15px;
   }
 }
 
@@ -208,3 +217,4 @@ setInterval(()=>{
 
 </body>
 </html>
+
