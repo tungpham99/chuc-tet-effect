@@ -31,19 +31,82 @@ html,body{
   z-index:1;
 }
 
-/* ===== SVG CUỘN GIẤY ===== */
-.scroll-svg{
-  position:fixed;
-  top:46%;
-  left:50%;
-  transform:translate(-50%,-50%) rotate(-4deg);
+/* ===== CHỮ TRÊN CUỘN GIẤY ===== */
+.scroll-text{
+  position: fixed;
+  top: 47%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-6deg);
 
-  width:58vw;
-  max-width:320px;
-  aspect-ratio:3/4;
+  width: 52%;
+  max-width: 300px;
+  aspect-ratio: 4 / 5;
 
-  z-index:3;
-  pointer-events:none;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  padding: 14px 16px;
+  box-sizing: border-box;
+
+  text-align: center;
+  color: #ffd700;
+  font-weight: 700;
+  line-height: 1.4;
+
+  z-index: 3;
+  pointer-events: none;
+}
+
+.scroll-text .from{
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.scroll-text .wish{
+  font-size: 15px;
+  font-weight: 800;
+}
+
+/* ===== FOOTER BUTTON ===== */
+.footer-actions{
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 12px;
+  z-index: 5;
+}
+
+.footer-actions button{
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  background: linear-gradient(135deg,#ffd700,#ffb700);
+  color: #7a2e00;
+  box-shadow: 0 6px 14px rgba(0,0,0,.35);
+}
+
+.footer-actions button:active{
+  transform: scale(0.95);
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 600px){
+  .scroll-text{
+    top: 48%;
+    width: 58%;
+    max-width: 260px;
+    transform: translate(-50%, -50%) rotate(-5deg);
+  }
+
+  .scroll-text .from{font-size:13px}
+  .scroll-text .wish{font-size:14px}
 }
 
 /* ===== FIREWORK ===== */
@@ -60,126 +123,60 @@ html,body{
 
 <div class="bg"></div>
 
-<!-- ===== CHỮ CONG + ÁNH KIM ===== -->
-<svg class="scroll-svg" viewBox="0 0 300 400" preserveAspectRatio="xMidYMid meet">
-  <defs>
-    <!-- Đường cong theo cuộn giấy -->
-    <path id="curveTop" d="M30 130 Q150 105 270 130"/>
-    <path id="curveMid" d="M40 210 Q150 235 260 210"/>
+<!-- ===== NỘI DUNG CHỮ ===== -->
+<div class="scroll-text">
+  <div class="from">
+    🎁 <b id="from"></b> gửi bạn lời chúc
+  </div>
+  <div class="wish" id="wish"></div>
+</div>
 
-    <!-- Gradient vàng kim -->
-    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#fff8c4"/>
-      <stop offset="25%" stop-color="#ffd700"/>
-      <stop offset="50%" stop-color="#ffec8b"/>
-      <stop offset="75%" stop-color="#ffb700"/>
-      <stop offset="100%" stop-color="#fff3a0"/>
-    </linearGradient>
-
-    <!-- Ánh kim chạy -->
-    <linearGradient id="shine" x1="-100%" y1="0%" x2="0%" y2="0%">
-      <stop offset="0%" stop-color="rgba(255,255,255,0)"/>
-      <stop offset="50%" stop-color="rgba(255,255,255,.8)"/>
-      <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
-      <animate attributeName="x1" from="-100%" to="100%" dur="3s" repeatCount="indefinite"/>
-      <animate attributeName="x2" from="0%" to="200%" dur="3s" repeatCount="indefinite"/>
-    </linearGradient>
-  </defs>
-
-  <!-- Dòng người gửi -->
-  <text font-size="14" font-weight="700" fill="url(#goldGradient)">
-    <textPath href="#curveTop" startOffset="50%" text-anchor="middle">
-      🎁 <tspan id="fromSvg"></tspan> gửi bạn lời chúc
-    </textPath>
-  </text>
-
-  <!-- Dòng lời chúc -->
-  <text font-size="16" font-weight="800" fill="url(#goldGradient)">
-    <textPath href="#curveMid" startOffset="50%" text-anchor="middle" id="wishSvg"></textPath>
-  </text>
-
-  <!-- Lớp ánh kim phủ -->
-  <rect x="0" y="0" width="100%" height="100%" fill="url(#shine)" opacity="0.35"/>
-</svg>
+<!-- ===== FOOTER BUTTON ===== -->
+<div class="footer-actions">
+  <button onclick="share()">📤 Chia sẻ</button>
+  <button onclick="feedback()">💬 Phản hồi</button>
+</div>
 
 <canvas id="fireworks"></canvas>
 
 <script>
 /* ===== LỜI CHÚC ===== */
 const wishes = [
-  "Xuân Bính Ngọ chúc bạn an khang thịnh vượng, vạn sự như ý 🌸",
-  "Năm mới Bính Ngọ chúc bạn sức khỏe dồi dào, gia đình hạnh phúc ❤️",
-  "Xuân mới chúc bạn tiền vào ào ào, niềm vui ngập tràn 🎉",
-  "Bính Ngọ đến, chúc bạn mã đáo thành công 🐎✨",
-  "Năm mới chúc bạn bình an từng ngày, may mắn từng giờ 🍀",
-  "Xuân Bính Ngọ chúc bạn công việc hanh thông, sự nghiệp thăng hoa 💼",
-  "Năm mới chúc bạn học hành tấn tới, thi cử thuận lợi 📚",
-  "Xuân sang chúc bạn vạn sự thuận hòa, gia đạo ấm êm 🧧",
-  "Bính Ngọ gõ cửa, chúc bạn khởi đầu mới đầy hứng khởi 🌱",
-  "Năm mới chúc bạn luôn mỉm cười và tràn đầy năng lượng 😄",
-
-  "Xuân Bính Ngọ chúc bạn tài lộc đủ đầy, chi tiêu không lo 💰",
-  "Năm mới chúc bạn mọi dự định đều thành hiện thực ✨",
-  "Bính Ngọ đến, chúc bạn đi xa gặp lành, về nhà gặp vui 🚗",
-  "Xuân mới chúc bạn tâm an – trí sáng – lòng vững vàng 🌿",
-  "Năm mới chúc bạn gặp nhiều quý nhân phù trợ 🤝",
-  "Xuân Bính Ngọ chúc bạn làm đâu thắng đó 🏆",
-  "Năm mới chúc bạn mỗi ngày đều là một ngày vui 🎈",
-  "Xuân sang chúc bạn gia đình sum vầy, ấm áp yêu thương 🏡",
-  "Bính Ngọ chúc bạn bứt phá mạnh mẽ trong năm mới 🚀",
-  "Năm mới chúc bạn luôn được yêu thương và trân trọng 💖",
-
-  "Xuân Bính Ngọ chúc bạn buôn may bán đắt, tiền vô như nước 💸",
-  "Năm mới chúc bạn bình an trong tâm, hạnh phúc ngoài đời 🌼",
-  "Bính Ngọ đến, chúc bạn ngựa phi ngàn dặm, sự nghiệp vững vàng 🐎",
-  "Xuân mới chúc bạn mọi khó khăn đều hóa nhẹ nhàng ☀️",
-  "Năm mới chúc bạn sức khỏe là vàng, tinh thần là kim cương 💎",
-  "Xuân Bính Ngọ chúc bạn gặt hái nhiều thành công mới 🌟",
-  "Năm mới chúc bạn vui Tết trọn vẹn, lộc xuân đầy nhà 🧧",
-  "Bính Ngọ chúc bạn luôn giữ được đam mê và nhiệt huyết 🔥",
-  "Xuân mới chúc bạn làm việc hăng say, nghỉ ngơi đủ đầy ⚖️",
-  "Năm mới chúc bạn ngày càng giỏi, càng sống càng vui 😄",
-
-  "Xuân Bính Ngọ chúc bạn mọi con đường đều rộng mở 🛣️",
-  "Năm mới chúc bạn tiền bạc rủng rỉnh, tiêu xài thoải mái 💳",
-  "Bính Ngọ đến, chúc bạn một năm không lo âu, không muộn phiền 🌈",
-  "Xuân mới chúc bạn đi đâu cũng gặp may 🍀",
-  "Năm mới chúc bạn gia đình khỏe mạnh, con cháu ngoan hiền 👨‍👩‍👧‍👦",
-  "Xuân Bính Ngọ chúc bạn thăng tiến đều đều, lương thưởng rủng rỉnh 📈",
-  "Năm mới chúc bạn giữ mãi tinh thần tích cực 🌞",
-  "Bính Ngọ chúc bạn vững bước trên mọi chặng đường 👣",
-  "Xuân mới chúc bạn yêu đời hơn mỗi ngày 💕",
-  "Năm mới chúc bạn an vui từ trong ra ngoài 🌿",
-
-  "Xuân Bính Ngọ chúc bạn tiền vô cửa trước, lộc vào cửa sau 🧧",
-  "Năm mới chúc bạn làm việc nhẹ nhàng, hiệu quả cao ⚡",
-  "Bính Ngọ đến, chúc bạn luôn gặp đúng người, đúng thời điểm ⏰",
-  "Xuân mới chúc bạn ước gì được nấy ✨",
-  "Năm mới chúc bạn cuộc sống cân bằng và viên mãn ⚖️",
-  "Xuân Bính Ngọ chúc bạn thêm nhiều trải nghiệm đáng nhớ 🧳",
-  "Năm mới chúc bạn mạnh khỏe để theo đuổi đam mê 🏃",
-  "Bính Ngọ chúc bạn gia đình hòa thuận, trên dưới thuận lòng 🤍",
-  "Xuân mới chúc bạn công việc suôn sẻ, deadline nhẹ tênh 😆",
-  "Năm mới chúc bạn luôn có lý do để mỉm cười 😊",
-
-  "Xuân Bính Ngọ chúc bạn khởi đầu thuận lợi, kết thúc viên mãn 🎯",
-  "Năm mới chúc bạn luôn gặp điều tốt lành 🌟",
-  "Bính Ngọ đến, chúc bạn thành công đến sớm hơn mong đợi 🚀",
-  "Xuân mới chúc bạn sống chậm mà vui, sống đơn giản mà hạnh phúc 🌸",
-  "Năm mới chúc bạn sức khỏe tốt để hưởng trọn niềm vui 🎁",
-  "Xuân Bính Ngọ chúc bạn một năm đáng nhớ và đáng tự hào ✨",
-  "Năm mới chúc bạn hạnh phúc đúng nghĩa của riêng mình 💖",
-  "Bính Ngọ chúc bạn mỗi ngày đều có tin vui 📬",
-  "Xuân mới chúc bạn cuộc sống nhẹ nhàng, lòng người an yên ☁️",
-  "Năm mới chúc bạn vạn điều tốt đẹp cùng lúc gõ cửa 🧧"
+  "Năm mới chúc bạn mỗi ngày đều là một ngày vui 🌸",
+  "Xuân sang chúc bạn an khang thịnh vượng 🧧",
+  "Bính Ngọ đến, chúc bạn mã đáo thành công 🐎",
+  "Năm mới chúc bạn bình an và may mắn 🍀",
+  "Xuân mới chúc bạn tiền vào như nước 💰",
+  "Chúc bạn một năm mới nhiều niềm vui 🎉"
 ];
 
 const params = new URLSearchParams(location.search);
 const from = params.get("from") || "Tùng Phạm";
 const wish = wishes[Math.floor(Math.random()*wishes.length)];
 
-document.getElementById("fromSvg").textContent = from;
-document.getElementById("wishSvg").textContent = wish;
+document.getElementById("from").innerText = from;
+document.getElementById("wish").innerText = wish;
+
+/* ===== SHARE ===== */
+function share(){
+  if(navigator.share){
+    navigator.share({
+      title: document.title,
+      text: "🎉 Mình vừa nhận được lời chúc năm mới nè!",
+      url: location.href
+    });
+  }else{
+    prompt("Copy link để chia sẻ:", location.href);
+  }
+}
+
+/* ===== FEEDBACK ===== */
+function feedback(){
+  window.open(
+    "https://www.facebook.com/messages/t/", 
+    "_blank"
+  );
+}
 
 /* ===== FIREWORK ===== */
 const canvas = document.getElementById("fireworks");
@@ -192,17 +189,17 @@ function resize(){
 resize();
 addEventListener("resize", resize);
 
-let sparks=[];
+let sparks = [];
 
 setInterval(()=>{
-  const x=Math.random()*canvas.width;
-  const y=Math.random()*canvas.height*0.4;
-  for(let i=0;i<30;i++){
+  const x = Math.random()*canvas.width;
+  const y = Math.random()*canvas.height*0.4;
+  for(let i=0;i<28;i++){
     sparks.push({
       x,y,
       dx:(Math.random()-.5)*4,
       dy:(Math.random()-.5)*4,
-      life:50
+      life:45
     });
   }
 },1300);
