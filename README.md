@@ -1,2 +1,2 @@
-# chuc-tet-effect
+# chuc-tet
 hihi
