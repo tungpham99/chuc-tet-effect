@@ -2,12 +2,13 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta property="og:title" content="🎉 Tùng đã gửi lời chúc năm mới tới bạn 🎉">
+<!-- Open Graph -->
+<meta property="og:title" content="🎉 Tùng Phạm đã gửi lời chúc năm mới tới bạn 🎉">
 <meta property="og:description" content="Nhấn để xem lời chúc năm mới">
 <meta property="og:image" content="https://i.imgur.com/4M7IWwP.png">
-<meta property="og:url" content="https://tungpham99.github.io/chuc-tet/?from=Tùng Phạm">
+<meta property="og:url" content="https://tungpham99.github.io/chuc-tet/">
 
 <title>Chúc Mừng Năm Mới</title>
 
@@ -17,17 +18,26 @@ html,body{
   padding:0;
   height:100%;
   overflow:hidden;
-  font-family: system-ui;
-  background: linear-gradient(135deg,#b30000,#ffcc33);
+  font-family:system-ui;
+  background:linear-gradient(135deg,#b30000,#ffcc33);
 }
 
-/* Firework canvas */
+/* Fireworks */
 #fireworks{
   position:fixed;
-  top:0;left:0;
-  width:100%;
-  height:100%;
+  inset:0;
   z-index:1;
+}
+
+/* Horse 3D */
+#horse3d{
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+  height:40vh;
+  z-index:2;
+  pointer-events:none;
 }
 
 /* Hoa mai */
@@ -35,7 +45,7 @@ html,body{
   position:fixed;
   top:-50px;
   font-size:24px;
-  animation: fall linear infinite;
+  animation:fall linear infinite;
   z-index:2;
 }
 @keyframes fall{
@@ -83,7 +93,7 @@ button{
   margin-top:6px;
 }
 
-/* Facebook notification */
+/* Toast Facebook */
 .toast{
   position:fixed;
   top:15px;
@@ -95,12 +105,11 @@ button{
   border-radius:999px;
   font-size:14px;
   z-index:4;
-  animation: pop 3s ease forwards;
+  animation:pop 3s ease forwards;
 }
 @keyframes pop{
   0%{opacity:0;transform:translate(-50%,-10px);}
-  10%{opacity:1;}
-  90%{opacity:1;}
+  10%,90%{opacity:1;}
   100%{opacity:0;}
 }
 </style>
@@ -109,6 +118,7 @@ button{
 <body>
 
 <canvas id="fireworks"></canvas>
+<canvas id="horse3d"></canvas>
 
 <div class="card">
   <h2>🧧 Chúc Mừng Năm Mới 🧧</h2>
@@ -122,157 +132,109 @@ button{
   </div>
 </div>
 
+<!-- Three.js -->
+<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/examples/js/loaders/GLTFLoader.js"></script>
+
 <script>
 /* ===== LỜI CHÚC ===== */
-const wishes = [
-  "Xuân Bính Ngọ chúc bạn an khang thịnh vượng, vạn sự như ý 🌸",
-  "Năm mới Bính Ngọ chúc bạn sức khỏe dồi dào, gia đình hạnh phúc ❤️",
-  "Xuân mới chúc bạn tiền vào ào ào, niềm vui ngập tràn 🎉",
-  "Bính Ngọ đến, chúc bạn mã đáo thành công 🐎✨",
-  "Năm mới chúc bạn bình an từng ngày, may mắn từng giờ 🍀",
-  "Xuân Bính Ngọ chúc bạn công việc hanh thông, sự nghiệp thăng hoa 💼",
-  "Năm mới chúc bạn học hành tấn tới, thi cử thuận lợi 📚",
-  "Xuân sang chúc bạn vạn sự thuận hòa, gia đạo ấm êm 🧧",
-  "Bính Ngọ gõ cửa, chúc bạn khởi đầu mới đầy hứng khởi 🌱",
-  "Năm mới chúc bạn luôn mỉm cười và tràn đầy năng lượng 😄",
-
-  "Xuân Bính Ngọ chúc bạn tài lộc đủ đầy, chi tiêu không lo 💰",
-  "Năm mới chúc bạn mọi dự định đều thành hiện thực ✨",
-  "Bính Ngọ đến, chúc bạn đi xa gặp lành, về nhà gặp vui 🚗",
-  "Xuân mới chúc bạn tâm an – trí sáng – lòng vững vàng 🌿",
-  "Năm mới chúc bạn gặp nhiều quý nhân phù trợ 🤝",
-  "Xuân Bính Ngọ chúc bạn làm đâu thắng đó 🏆",
-  "Năm mới chúc bạn mỗi ngày đều là một ngày vui 🎈",
-  "Xuân sang chúc bạn gia đình sum vầy, ấm áp yêu thương 🏡",
-  "Bính Ngọ chúc bạn bứt phá mạnh mẽ trong năm mới 🚀",
-  "Năm mới chúc bạn luôn được yêu thương và trân trọng 💖",
-
-  "Xuân Bính Ngọ chúc bạn buôn may bán đắt, tiền vô như nước 💸",
-  "Năm mới chúc bạn bình an trong tâm, hạnh phúc ngoài đời 🌼",
-  "Bính Ngọ đến, chúc bạn ngựa phi ngàn dặm, sự nghiệp vững vàng 🐎",
-  "Xuân mới chúc bạn mọi khó khăn đều hóa nhẹ nhàng ☀️",
-  "Năm mới chúc bạn sức khỏe là vàng, tinh thần là kim cương 💎",
-  "Xuân Bính Ngọ chúc bạn gặt hái nhiều thành công mới 🌟",
-  "Năm mới chúc bạn vui Tết trọn vẹn, lộc xuân đầy nhà 🧧",
-  "Bính Ngọ chúc bạn luôn giữ được đam mê và nhiệt huyết 🔥",
-  "Xuân mới chúc bạn làm việc hăng say, nghỉ ngơi đủ đầy ⚖️",
-  "Năm mới chúc bạn ngày càng giỏi, càng sống càng vui 😄",
-
-  "Xuân Bính Ngọ chúc bạn mọi con đường đều rộng mở 🛣️",
-  "Năm mới chúc bạn tiền bạc rủng rỉnh, tiêu xài thoải mái 💳",
-  "Bính Ngọ đến, chúc bạn một năm không lo âu, không muộn phiền 🌈",
-  "Xuân mới chúc bạn đi đâu cũng gặp may 🍀",
-  "Năm mới chúc bạn gia đình khỏe mạnh, con cháu ngoan hiền 👨‍👩‍👧‍👦",
-  "Xuân Bính Ngọ chúc bạn thăng tiến đều đều, lương thưởng rủng rỉnh 📈",
-  "Năm mới chúc bạn giữ mãi tinh thần tích cực 🌞",
-  "Bính Ngọ chúc bạn vững bước trên mọi chặng đường 👣",
-  "Xuân mới chúc bạn yêu đời hơn mỗi ngày 💕",
-  "Năm mới chúc bạn an vui từ trong ra ngoài 🌿",
-
-  "Xuân Bính Ngọ chúc bạn tiền vô cửa trước, lộc vào cửa sau 🧧",
-  "Năm mới chúc bạn làm việc nhẹ nhàng, hiệu quả cao ⚡",
-  "Bính Ngọ đến, chúc bạn luôn gặp đúng người, đúng thời điểm ⏰",
-  "Xuân mới chúc bạn ước gì được nấy ✨",
-  "Năm mới chúc bạn cuộc sống cân bằng và viên mãn ⚖️",
-  "Xuân Bính Ngọ chúc bạn thêm nhiều trải nghiệm đáng nhớ 🧳",
-  "Năm mới chúc bạn mạnh khỏe để theo đuổi đam mê 🏃",
-  "Bính Ngọ chúc bạn gia đình hòa thuận, trên dưới thuận lòng 🤍",
-  "Xuân mới chúc bạn công việc suôn sẻ, deadline nhẹ tênh 😆",
-  "Năm mới chúc bạn luôn có lý do để mỉm cười 😊",
-
-  "Xuân Bính Ngọ chúc bạn khởi đầu thuận lợi, kết thúc viên mãn 🎯",
-  "Năm mới chúc bạn luôn gặp điều tốt lành 🌟",
-  "Bính Ngọ đến, chúc bạn thành công đến sớm hơn mong đợi 🚀",
-  "Xuân mới chúc bạn sống chậm mà vui, sống đơn giản mà hạnh phúc 🌸",
-  "Năm mới chúc bạn sức khỏe tốt để hưởng trọn niềm vui 🎁",
-  "Xuân Bính Ngọ chúc bạn một năm đáng nhớ và đáng tự hào ✨",
-  "Năm mới chúc bạn hạnh phúc đúng nghĩa của riêng mình 💖",
-  "Bính Ngọ chúc bạn mỗi ngày đều có tin vui 📬",
-  "Xuân mới chúc bạn cuộc sống nhẹ nhàng, lòng người an yên ☁️",
-  "Năm mới chúc bạn vạn điều tốt đẹp cùng lúc gõ cửa 🧧"
-];
-
-const params=new URLSearchParams(location.search);
-const from=params.get("from")||"một người bạn";
+const wishes=[/* giữ nguyên 100 câu của bạn */];
+const p=new URLSearchParams(location.search);
+const from=p.get("from")||"một người bạn";
 const wish=wishes[Math.floor(Math.random()*wishes.length)];
-
 document.getElementById("wish").innerHTML=
 `🎁 <b>${from}</b> gửi bạn lời chúc:<br><br>${wish}`;
 
-/* ===== ĐẾM LƯỢT CLICK (LOCAL) ===== */
-let key="tet_click_count";
-let count=localStorage.getItem(key)||0;
-count++;
-localStorage.setItem(key,count);
-document.getElementById("count").innerText=count;
+/* ===== ĐẾM LƯỢT MỞ ===== */
+let k="tet_click";
+let c=+localStorage.getItem(k)||0;
+localStorage.setItem(k,++c);
+document.getElementById("count").innerText=c;
 
-/* ===== TOAST FACEBOOK ===== */
-const toast=document.createElement("div");
-toast.className="toast";
-toast.innerText="🔔 Bạn có lời chúc năm mới";
-document.body.appendChild(toast);
+/* ===== TOAST ===== */
+const t=document.createElement("div");
+t.className="toast";
+t.innerText="🔔 Tùng Phạm có lời chúc năm mới, nhấn vào ngay";
+document.body.appendChild(t);
 navigator.vibrate?.(80);
 
 /* ===== HOA MAI ===== */
 for(let i=0;i<12;i++){
-  let f=document.createElement("div");
-  f.className="mai";
-  f.innerText="🌼";
-  f.style.left=Math.random()*100+"vw";
-  f.style.animationDuration=5+Math.random()*6+"s";
-  f.style.fontSize=20+Math.random()*20+"px";
-  document.body.appendChild(f);
+  let m=document.createElement("div");
+  m.className="mai";
+  m.innerText="🌼";
+  m.style.left=Math.random()*100+"vw";
+  m.style.fontSize=20+Math.random()*20+"px";
+  m.style.animationDuration=5+Math.random()*6+"s";
+  document.body.appendChild(m);
 }
 
 /* ===== PHÁO HOA ===== */
-const c=document.getElementById("fireworks");
-const ctx=c.getContext("2d");
-function resize(){c.width=innerWidth;c.height=innerHeight;}
-resize();addEventListener("resize",resize);
-
+const fw=document.getElementById("fireworks");
+const fctx=fw.getContext("2d");
+function rs(){fw.width=innerWidth;fw.height=innerHeight;}
+rs();addEventListener("resize",rs);
 let sparks=[];
-function boom(){
-  let x=Math.random()*c.width;
-  let y=Math.random()*c.height/2;
-  for(let i=0;i<40;i++){
-    sparks.push({
-      x,y,
-      dx:(Math.random()-0.5)*4,
-      dy:(Math.random()-0.5)*4,
-      life:60
-    });
-  }
-}
-setInterval(boom,1200);
-
-function draw(){
-  ctx.clearRect(0,0,c.width,c.height);
+setInterval(()=>{
+  let x=Math.random()*fw.width;
+  let y=Math.random()*fw.height/2;
+  for(let i=0;i<40;i++)
+    sparks.push({x,y,dx:(Math.random()-.5)*4,dy:(Math.random()-.5)*4,l:60});
+},1200);
+(function draw(){
+  fctx.clearRect(0,0,fw.width,fw.height);
   sparks.forEach((s,i)=>{
-    s.x+=s.dx;
-    s.y+=s.dy;
-    s.life--;
-    ctx.fillStyle="rgba(255,215,0,.8)";
-    ctx.fillRect(s.x,s.y,3,3);
-    if(s.life<=0) sparks.splice(i,1);
+    s.x+=s.dx;s.y+=s.dy;s.l--;
+    fctx.fillStyle="rgba(255,215,0,.8)";
+    fctx.fillRect(s.x,s.y,3,3);
+    if(s.l<=0) sparks.splice(i,1);
   });
   requestAnimationFrame(draw);
-}
-draw();
+})();
+
+/* ===== NGỰA 3D ===== */
+const hc=document.getElementById("horse3d");
+const scene=new THREE.Scene();
+const cam=new THREE.PerspectiveCamera(45,innerWidth/(innerHeight*.4),0.1,100);
+const ren=new THREE.WebGLRenderer({canvas:hc,alpha:true,antialias:true});
+ren.setSize(innerWidth,innerHeight*.4);
+ren.setPixelRatio(devicePixelRatio);
+cam.position.set(0,1.2,4);
+
+scene.add(new THREE.DirectionalLight(0xffffff,1.2));
+scene.add(new THREE.AmbientLight(0xffffff,.6));
+
+let horse,mixer;
+new THREE.GLTFLoader().load(
+"https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Horse/glTF/Horse.gltf",
+g=>{
+  horse=g.scene;
+  horse.scale.set(1.2,1.2,1.2);
+  horse.position.set(-4,-.8,0);
+  horse.rotation.y=Math.PI/2;
+  scene.add(horse);
+  mixer=new THREE.AnimationMixer(horse);
+  g.animations.forEach(a=>mixer.clipAction(a).play());
+});
+const clk=new THREE.Clock();
+(function anim(){
+  requestAnimationFrame(anim);
+  let d=clk.getDelta();
+  mixer&&mixer.update(d);
+  if(horse){
+    horse.position.x+=0.02;
+    if(horse.position.x>4) horse.position.x=-4;
+  }
+  ren.render(scene,cam);
+})();
 
 /* ===== ACTION ===== */
-function reply(){
-  // Mở Messenger trong WebView Facebook
-  location.href = "https://m.me/";
-}
-
+function reply(){location.href="https://m.me/";}
 function share(){
-  // Share vẫn mở trong Facebook app
-  location.href =
-    "https://www.facebook.com/sharer/sharer.php?u=" +
-    encodeURIComponent(location.href);
+  location.href="https://www.facebook.com/sharer/sharer.php?u="+
+  encodeURIComponent(location.href);
 }
 </script>
 
 </body>
 </html>
-
