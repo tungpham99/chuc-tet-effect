@@ -34,13 +34,19 @@ html,body{
   z-index:1;
 }
 
-/* Horse 3D */
-#horse3d{
+/* BACKGROUND NGỰA CẦM GIẤY */
+.bg-paper{
   position:fixed;
-  bottom:0;
-  left:0;
-  width:100%;
-  height:40vh;
+  inset:0;
+  background:url("https://tungpham99.github.io/chuc-tet/horse-paper.png")
+             center bottom / cover no-repeat;
+  z-index:0;
+}
+
+/* CANVAS VẼ LỜI CHÚC */
+#wishCanvas{
+  position:fixed;
+  inset:0;
   z-index:2;
   pointer-events:none;
 }
@@ -123,12 +129,11 @@ button{
 <body>
 
 <canvas id="fireworks"></canvas>
-<canvas id="horse3d"></canvas>
 
 <div class="card">
   <h2>🧧 Chúc Mừng Năm Mới 🧧</h2>
-  <div id="wish"></div>
-
+<div class="bg-paper"></div>
+<canvas id="wishCanvas"></canvas>
   <button class="reply" onclick="reply()">💬 Phản hồi</button>
   <button class="share" onclick="share()">📤 Chia sẻ</button>
 
@@ -263,41 +268,68 @@ setInterval(()=>{
   requestAnimationFrame(draw);
 })();
 
-/* ===== NGỰA 3D ===== */
-const hc=document.getElementById("horse3d");
-const scene=new THREE.Scene();
-const cam=new THREE.PerspectiveCamera(45,innerWidth/(innerHeight*.4),0.1,100);
-const ren=new THREE.WebGLRenderer({canvas:hc,alpha:true,antialias:true});
-ren.setSize(innerWidth,innerHeight*.4);
-ren.setPixelRatio(devicePixelRatio);
-cam.position.set(0,1.2,4);
+const paperCanvas = document.getElementById("wishCanvas");
+const pctx = paperCanvas.getContext("2d");
 
-scene.add(new THREE.DirectionalLight(0xffffff,1.2));
-scene.add(new THREE.AmbientLight(0xffffff,.6));
+function resizePaper(){
+  paperCanvas.width = innerWidth;
+  paperCanvas.height = innerHeight;
+  drawPaperText();
+}
+window.addEventListener("resize", resizePaper);
 
-let horse,mixer;
-new THREE.GLTFLoader().load(
-"https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Horse/glTF/Horse.gltf",
-g=>{
-  horse=g.scene;
-  horse.scale.set(1.2,1.2,1.2);
-  horse.position.set(-4,-.8,0);
-  horse.rotation.y=Math.PI/2;
-  scene.add(horse);
-  mixer=new THREE.AnimationMixer(horse);
-  g.animations.forEach(a=>mixer.clipAction(a).play());
+/* CANH CHUẨN VỊ TRÍ TỜ GIẤY */
+function drawPaperText(){
+  pctx.clearRect(0,0,paperCanvas.width,paperCanvas.height);
+
+  const paperX = paperCanvas.width * 0.52;   // chỉnh trái/phải
+  const paperY = paperCanvas.height * 0.38;  // chỉnh lên/xuống
+  const maxWidth = paperCanvas.width * 0.38;
+
+  pctx.textAlign = "center";
+  pctx.fillStyle = "#7a2b00";
+  pctx.font = "bold 26px system-ui";
+
+  wrapTextCanvas(
+    pctx,
+    `🎁 ${from} chúc bạn:\n${wish}`,
+    paperX,
+    paperY,
+    maxWidth,
+    36
+  );
+}
+
+function wrapTextCanvas(ctx, text, x, y, maxWidth, lineHeight){
+  const lines = text.split("\n");
+  let offsetY = 0;
+
+  lines.forEach(line=>{
+    let words = line.split(" ");
+    let lineText = "";
+
+    words.forEach(word=>{
+      const test = lineText + word + " ";
+      if(ctx.measureText(test).width > maxWidth){
+        ctx.fillText(lineText, x, y + offsetY);
+        lineText = word + " ";
+        offsetY += lineHeight;
+      }else{
+        lineText = test;
+      }
+    });
+
+    ctx.fillText(lineText, x, y + offsetY);
+    offsetY += lineHeight;
+  });
+}
+resizePaper();
+/* RESIZE */
+window.addEventListener("resize", () => {
+  renderer.setSize(window.innerWidth, window.innerHeight * 0.4);
+  camera.aspect = window.innerWidth / (window.innerHeight * 0.4);
+  camera.updateProjectionMatrix();
 });
-const clk=new THREE.Clock();
-(function anim(){
-  requestAnimationFrame(anim);
-  let d=clk.getDelta();
-  mixer&&mixer.update(d);
-  if(horse){
-    horse.position.x+=0.02;
-    if(horse.position.x>4) horse.position.x=-4;
-  }
-  ren.render(scene,cam);
-})();
 
 /* ===== ACTION ===== */
 function reply(){location.href="https://m.me/";}
@@ -309,5 +341,6 @@ function share(){
 
 </body>
 </html>
+
 
 
