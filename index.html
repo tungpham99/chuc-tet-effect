@@ -36,10 +36,10 @@ html,body{
 
 /* BACKGROUND NGỰA CẦM GIẤY */
 .bg-paper{
-  position:fixed;
+position:fixed;
   inset:0;
   background:url("https://tungpham99.github.io/chuc-tet/horse-paper.png")
-             center bottom / cover no-repeat;
+             center bottom / contain no-repeat;
   z-index:0;
 }
 
@@ -122,6 +122,12 @@ button{
   0%{opacity:0;transform:translate(-50%,-10px);}
   10%,90%{opacity:1;}
   100%{opacity:0;}
+}
+@media (max-width: 768px){
+  .bg-paper{
+    background-position: center bottom;
+    background-size: 100% auto;
+  }
 }
 </style>
 </head>
@@ -341,6 +347,7 @@ function share(){
 
 </body>
 </html>
+
 
 
 
