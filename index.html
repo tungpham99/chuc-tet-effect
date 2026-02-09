@@ -31,60 +31,54 @@ html,body{
   z-index:1;
 }
 
-/* ===== GOLD PANEL (KHUNG CHỮ) ===== */
 .scroll-text{
-  position:fixed;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
+    position: fixed;
+    top: 42%;                 /* canh giữa cuộn giấy */
+    left: 50%;
+    transform: translate(-50%, -50%);
 
-  width:62%;
-  max-width:420px;
+    width: 56%;
+    max-width: 360px;
 
-  padding:18px 20px;
-  border-radius:14px;
+    padding: 10px 12px;
+    border-radius: 10px;
 
-  background:linear-gradient(
-    180deg,
-    rgba(255,220,140,.95),
-    rgba(255,193,7,.9)
-  );
+    text-align: center;
 
-  border:2px solid rgba(255,255,255,.6);
+    color: #FFD966;           /* vàng gold dễ đọc */
+    font-weight: 700;
 
-  box-shadow:
-    0 10px 35px rgba(0,0,0,.45),
-    inset 0 0 18px rgba(255,255,255,.35);
+    text-shadow:
+        0 2px 6px rgba(0,0,0,.6),
+        0 0 12px rgba(255,215,0,.45);
 
-  text-align:center;
-  color:#7a1f00;
-  z-index:3;
+    z-index: 10;
 }
 
-/* ===== TEXT ===== */
-.scroll-text .from{
-  font-size:13px;
-  font-weight:600;
-  margin-bottom:8px;
-  opacity:.9;
-}
-
+/* ===== CHỮ NỘI DUNG ===== */
 .scroll-text .wish{
-  font-size:16px;
-  line-height:1.6;
-  font-weight:700;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+/* ===== DÒNG NGƯỜI GỬI ===== */
+.scroll-text .from{
+    font-size: 13px;
+    margin-bottom: 6px;
+    opacity: .9;
 }
 
 /* ===== MOBILE ===== */
-@media(max-width:600px){
-  .scroll-text{
-    width:72%;
-  }
-  .scroll-text .wish{
-    font-size:15px;
-  }
-}
+@media (max-width: 600px){
+    .scroll-text{
+        top: 44%;
+        width: 60%;
+    }
 
+    .scroll-text .wish{
+        font-size: 14px;
+    }
+}
 /* ===== FIREWORKS ===== */
 #fireworks{
   position:fixed;
@@ -228,3 +222,4 @@ setInterval(()=>{
 
 </body>
 </html>
+
