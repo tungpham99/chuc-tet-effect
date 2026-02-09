@@ -80,7 +80,7 @@ html,body{
 
 <div class="scroll-text">
   <div class="from">
-    🎁 <b id="from"></b> gửi bạn lời chúc
+    🎁 <b id="from">Tùng Phạm</b> gửi bạn lời chúc
   </div>
   <div class="wish" id="wish"></div>
 </div>
@@ -158,7 +158,7 @@ const wishes = [
 ];
 
 const params = new URLSearchParams(location.search);
-const from = params.get("from") || "một người bạn";
+const from = params.get("from") || "Tùng Phạm";
 const wish = wishes[Math.floor(Math.random()*wishes.length)];
 
 document.getElementById("from").innerText = from;
@@ -206,5 +206,6 @@ setInterval(()=>{
 
 </body>
 </html>
+
 
 
