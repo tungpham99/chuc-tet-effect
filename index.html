@@ -326,19 +326,25 @@ for(let i=0;i<18;i++){
 }
 
 /* ===== SHARE ===== */
+function isFacebookApp(){
+  return /FBAN|FBAV/i.test(navigator.userAgent);
+}
+
 function share(){
-  if(navigator.share){
+  if(navigator.share && !isFacebookApp()){
     navigator.share({
-      title:document.title,
-      text:"🎉 Mình vừa nhận được lời chúc năm mới!",
-      url:location.href
+      title: document.title,
+      text: "🎉 Mình vừa nhận được lời chúc năm mới!",
+      url: location.href
     });
   }else{
-    prompt("Copy link để chia sẻ:",location.href);
+    const url = encodeURIComponent(location.href);
+    location.href = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
   }
 }
+
 function feedback(){
-  window.open("https://www.facebook.com/messages/t/","_blank");
+  location.href = "https://m.me/";
 }
 
 /* ===== FIREWORK ===== */
@@ -369,6 +375,7 @@ setInterval(()=>{
 
 </body>
 </html>
+
 
 
 
