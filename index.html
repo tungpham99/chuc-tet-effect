@@ -232,8 +232,7 @@ html,body{
 <!-- FOOTER -->
 <div class="footer-wrapper">
   <div class="footer-actions">
-    <button onclick="share()">📤 Chia sẻ</button>
-    <button onclick="feedback()">💬 Phản hồi</button>
+    <button onclick="feedback()">💬 Trả lời</button>
   </div>
 </div>
 
@@ -324,15 +323,6 @@ for(let i=0;i<18;i++){
   petals.appendChild(p);
 }
 
-/* ===== SHARE ===== */
-function share(){
-  const url = encodeURIComponent(location.href);
-  window.open(
-    `https://www.facebook.com/sharer/sharer.php?u=${url}`,
-    "_blank"
-  );
-}
-
 function feedback(){
   const fb = "devvoi6299"; // đổi thành username hoặc page id của bạn
   window.location.href = `fb-messenger://user-thread/${fb}`;
@@ -369,6 +359,7 @@ setInterval(()=>{
 
 </body>
 </html>
+
 
 
 
